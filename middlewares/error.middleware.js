@@ -11,12 +11,12 @@ const errorHandler = (err, req, res, next) => {
   }
 
   // Zod validation errors
-  if (err instanceof ZodError) {
-    return res.status(400).json({
-      success: false,
-      errors: err.errors.map(e => e.message),
-    });
-  }
+  // if (err instanceof ZodError) {
+  //   return res.status(400).json({
+  //     success: false,
+  //     errors: err.errors.map(e => e.message),
+  //   });
+  // }
 
   // Generic / custom errors
   const statusCode = err.statusCode || 500;

@@ -1,11 +1,13 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const session = require("express-session");
 const connectDB = require("./database/lost.db");
 const errorHandler = require("./middlewares/error.middleware");
 const cookieParser = require("cookie-parser");
+const path = require("path");
+require("dotenv").config({
+  path: path.resolve(__dirname, ".env"),
+});
 
-dotenv.config();
 connectDB();
 
 const app = express();
@@ -22,8 +24,8 @@ app.set("view engine", "ejs");
 // ====== Session ======
 app.use(
   session({
-    secret: "hello world",
-    saveUninitialized: false,
+    secret: process.env.SESSIONSECRET,
+    saveUninitialized: true,
     resave: false,
     cookie: {
       secure: false,
@@ -35,10 +37,8 @@ app.use(
 
 // ====== Routes ======
 const authRouter = require("./routes/auth.routes");
+
 app.use("/api/auth", authRouter);
-// app.use("/api/items", require("./routes/item.routes"));
-// app.use("/api/user", require("./routes/user.routes"));
-// app.use("/api/admin", require("./routes/admin.routes"));
 
 // ====== Error middleware MUST be last ======
 app.use(errorHandler);
