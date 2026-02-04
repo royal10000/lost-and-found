@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-exports.signToken = async (res, payload={}) => {
-  const lost_cookie = await jwt.sign(payload, process.env.JWTSECRET, {
+exports.signToken =  (res, payload={}) => {
+  const lost_cookie =  jwt.sign(payload, process.env.JWTSECRET, {
     expiresIn: "1d",
   });
   res.cookie("access_token", lost_cookie, {
@@ -11,6 +11,6 @@ exports.signToken = async (res, payload={}) => {
   });
 };
 
-exports.verifyToken = async (token) => {
-  return await jwt.verify(token, process.env.JWTSECRET);
+exports.verifyToken =  (token) => {
+  return  jwt.verify(token, process.env.JWTSECRET);
 };

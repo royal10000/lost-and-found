@@ -19,7 +19,11 @@ exports.login = async (req, res, next) => {
 
     if (!isPasswordMatch)
       return next(new AppError("password doesn't matched", 404));
-    await signToken(res, { username: user.username, role: user.role });
+     signToken(res, {
+      username: user.username,
+      role: user.role,
+      id: user._id,
+    });
     res.status(200).json({
       success: true,
       data: user,

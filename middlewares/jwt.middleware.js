@@ -3,7 +3,7 @@
 const AppError = require("../utils/AppError.utils");
 const { verifyToken } = require("../utils/jwt.utils");
 
-const authVerify =  (req, res, next) => {
+const authVerify = (req, res, next) => {
   try {
     const access_token = req.cookies?.access_token;
     if (!access_token) {
@@ -11,10 +11,15 @@ const authVerify =  (req, res, next) => {
         new AppError("You're not logged in. please login first", 401),
       );
     }
-    req.token = verifyToken(access_token);
+    req.user = verifyToken(access_token);
     next();
   } catch (error) {
-    return next(new AppError("Invalid token or Expired Token", 403));
+    if (error.name === "TokenExpiredError") {
+      return next(
+        new AppError("Your session has expired. Please login again.", 401),
+      );
+    }
+    return next(new AppError("Invalid token. Authentication failed.", 403));
   }
 };
 

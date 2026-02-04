@@ -1,7 +1,7 @@
 const multer = require("multer");
-const { ZodError } = require("zod");
+// const { ZodError } = require("zod");
 
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res) => {
   // Multer errors
   if (err instanceof multer.MulterError) {
     return res.status(400).json({
@@ -9,14 +9,6 @@ const errorHandler = (err, req, res, next) => {
       errors: [err.message],
     });
   }
-
-  // Zod validation errors
-  // if (err instanceof ZodError) {
-  //   return res.status(400).json({
-  //     success: false,
-  //     errors: err.errors.map(e => e.message),
-  //   });
-  // }
 
   // Generic / custom errors
   const statusCode = err.statusCode || 500;

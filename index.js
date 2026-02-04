@@ -37,8 +37,10 @@ app.use(
 
 // ====== Routes ======
 const authRouter = require("./routes/auth.routes");
+const itemRouter = require("./routes/items.routes");
 
 app.use("/api/auth", authRouter);
+app.use("/api/items", itemRouter);
 
 // ====== Error middleware MUST be last ======
 app.use(errorHandler);
