@@ -16,7 +16,7 @@ const itemSchema = new mongoose.Schema(
       index: true,
     },
     images: {
-      type: [{ path: { type: String }, hash: { type: String } }],
+      type: [{ img: { type: String }, hash: { type: String } }],
     },
     location: { type: String, required: true },
     status: {
@@ -39,16 +39,11 @@ const itemSchema = new mongoose.Schema(
 // Search Index
 itemSchema.index({ title: "text" });
 
-itemSchema.pre("save", function (next) {
-  if (!this.isModified("title")) return next();
+itemSchema.pre("save", async function () {
+  if (!this.isModified("title")) return;
 
-  try {
-    const baseSlug = slugify(this.title, { lower: true, strict: true });
-    this.slug = `${Date.now()}-${baseSlug}`;
-    next();
-  } catch (err) {
-    next(err); // Pass error to Mongoose
-  }
+  const baseSlug = slugify(this.title, { lower: true, strict: true });
+  this.slug = `${Date.now()}-${baseSlug}`;
 });
 
 module.exports = mongoose.model("Item", itemSchema);

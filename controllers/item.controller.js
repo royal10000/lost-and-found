@@ -48,13 +48,10 @@ exports.createItemForm = async (req, res) => {
   res.status(200).json({ csrf: generateCsrfToken(req, res) });
 };
 exports.createItem = async (req, res, next) => {
-  console.log("next:", next);
-  console.log("type:", typeof next);
-
   try {
     const { username, role, id } = req.user;
     const { title, description, location, category } = req.body;
-    const images = req.files;
+    const files = req.files;
 
     if (
       !req.files ||
@@ -69,21 +66,37 @@ exports.createItem = async (req, res, next) => {
       );
     }
 
-    const hashedImage = images.map(async (file) => {
-      return await imageHash(file.path);
-    });
+    const promisedImage = await Promise.all(
+      files.map(async (file) => {
+        const hashedimage = await imageHash(file.path);
+        // console.log(file.path)
+        const duplicate = await Item.findOne({ "images.hash": hashedimage });
+        console.log(duplicate)
+        if (duplicate) {
+          const existingPath = duplicate.images.find(
+            (img) => img.hash === hashedimage,
+          ).img;
+          unlinkImage(file.path);
+          console.log(existingPath)
 
-    const promisedImage = await Promise.all(hashedImage);
-    const imageData = req.files.map((file, index) => ({
-      path: file.path,
-      hash: promisedImage[index],
-    }));
+          return { img: existingPath, hash: hashedimage };
+        }
+        return { img: file.path, hash: hashedimage };
+      }),
+    );
+    // console.log(promisedImage);
+    // const imageData = req.files.map((file, index) => ({
+    //   path: file.path,
+    //   hash: promisedImage[index],
+    // }));
+    console.log(promisedImage);
     const createdItem = await Item.create({
       title,
       description,
       location,
       category,
       uploader: id,
+      images: promisedImage,
     });
 
     res.status(200).json({
@@ -98,8 +111,6 @@ exports.createItem = async (req, res, next) => {
         unlinkImage(file.path);
       });
     }
-
-    console.log("hflds");
     next(new AppError(`error in create item ${error.message}`, 500));
   }
 };

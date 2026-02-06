@@ -1,9 +1,9 @@
 const {
-  singup,
   logout,
   login,
   signupForm,
   loginForm,
+  signup,
 } = require("../controllers/auth.controller");
 const {
   doubleCsrfProtection,
@@ -16,6 +16,6 @@ const router = require("express").Router();
 router.get("/login", loginForm);
 router.post("/login", login);
 router.get("/signup", signupForm);
-router.post("/signup", singup);
+router.post("/signup", signup);
 router.post("/logout", authVerify, logout);
 module.exports = router;

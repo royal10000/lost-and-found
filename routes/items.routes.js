@@ -14,26 +14,22 @@ const router = require("express").Router();
 router.get("/", allitems);
 router.get("/:category", allitems);
 router.get("/:id/:slug", singleItem);
-router.get("/create-post", authVerify, createItemForm);
-router.post(
-  "/create-post",
-  authVerify,
-  upload.array("itemImage", 3),
-  createItem,
-);
+router.get("/create", authVerify, createItemForm);
 router.post(
   "/create",
   authVerify,
-  upload.array("itemImage", 3),
-  items,
+  upload.array("image", 3),
+  createItem,
 );
-// router.get("/update-post", authVerify, updateItemForm);
+
+// router.get("/update", authVerify, updateItemForm);
 // router.patch(
-//   "/update-post",
+//   "/update",
 //   authVerify,
 //   upload.array("itemImage", 3),
 //   createItem,
 // );
-// router.get("/")
+
+
 
 module.exports = router;

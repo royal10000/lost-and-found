@@ -19,7 +19,7 @@ exports.login = async (req, res, next) => {
 
     if (!isPasswordMatch)
       return next(new AppError("password doesn't matched", 404));
-     signToken(res, {
+    signToken(res, {
       username: user.username,
       role: user.role,
       id: user._id,
@@ -37,7 +37,7 @@ exports.signupForm = async (req, res) => {
   const token = generateCsrfToken(req, res);
   res.status(200).json({ csrf: token });
 };
-exports.singup = async (req, res, next) => {
+exports.signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
     // console.log(req.body);
@@ -71,16 +71,17 @@ exports.logout = async (req, res, next) => {
   try {
     res.clearCookie("access_token");
 
-    // 2. If you are using sessions for CSRF, destroy the session too
     req.session.destroy((err) => {
       if (err) {
-        return res.status(500).json({ message: "Could not log out" });
+        return next(new AppError("Could not log out", 500));
       }
+
+      res.status(200).json({
+        success: true,
+        message: "user logged out successfully",
+      });
     });
-    res
-      .status(200)
-      .json({ success: true, message: "user logged out successfully" });
   } catch (error) {
-    next(new AppError(error.message, 500));
+    next(error);
   }
 };
