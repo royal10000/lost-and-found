@@ -16,7 +16,7 @@ const itemSchema = new mongoose.Schema(
       index: true,
     },
     images: {
-      type: [{ img: { type: String }, hash: { type: String } }],
+      type: [{ path: { type: String }, hash: { type: String } }],
     },
     location: { type: String, required: true },
     status: {
@@ -30,14 +30,16 @@ const itemSchema = new mongoose.Schema(
       required: true,
     },
     isVerified: { type: Boolean, default: false },
+    isApproved: { type: Boolean, default: false },
     verifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     verifiedAt: { type: Date },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
 
 // Search Index
-itemSchema.index({ title: "text" });
+itemSchema.index({ title: "text", "images.hash": 1 });
 
 itemSchema.pre("save", async function () {
   if (!this.isModified("title")) return;
